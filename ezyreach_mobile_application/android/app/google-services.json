@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1030152776545",
+    "project_id": "ezy-reach",
+    "storage_bucket": "ezy-reach.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030152776545:android:2ddcaa1869482a41957320",
+        "android_client_info": {
+          "package_name": "com.example.ezyreach_mobile_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMjMFgwrqDZhR6qhlQV2oKU5c-1N9uiEQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
