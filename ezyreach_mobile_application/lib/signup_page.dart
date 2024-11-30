@@ -90,7 +90,7 @@ class _SignupPageState extends State<SignupPage> {
                               _buildTextField(_shopNameController, "Shop Name"),
                               _buildTextField(_businessLocationController, "Business Location"),
                             ] else ...[
-                              _buildTextField(_experienceLevelController, "Company"),
+                                _buildTextField(_experienceLevelController, "Company"),
                             ],
                           ],
                         ),

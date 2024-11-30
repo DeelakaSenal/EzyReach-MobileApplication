@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'shop_owner_dashboard.dart'; // Import ShopOwnerDashboard page
-import 'signup_page.dart';
+import 'sales_rep_dashboard.dart'; // Import SalesRepDashboard page
+import 'signup_page.dart'; // Import SignupPage
 
 class LoginPage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
@@ -76,18 +77,27 @@ class LoginPage extends StatelessWidget {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            // Hardcoded username and password check
+                            // Check for hardcoded credentials
                             if (_usernameController.text == "owner" &&
                                 _passwordController.text == "owner") {
-                              // Navigate to ShopOwnerDashboard if login is successful
+                              // Navigate to ShopOwnerDashboard
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ShopOwnerDashboard(),
                                 ),
                               );
+                            } else if (_usernameController.text == "salesrep" &&
+                                _passwordController.text == "salesrep") {
+                              // Navigate to SalesRepDashboard
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SalesRepDashboard(),
+                                ),
+                              );
                             } else {
-                              // Show an error message if credentials don't match
+                              // Show error message for invalid credentials
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(content: Text('Invalid username or password')),
                               );
