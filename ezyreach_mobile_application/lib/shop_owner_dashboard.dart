@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'coke_details.dart';
 
 class ShopOwnerDashboard extends StatelessWidget {
+  const ShopOwnerDashboard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100), // Adjusted AppBar height for the search bar
+        preferredSize: const Size.fromHeight(100), // Adjusted AppBar height for the search bar
         child: Container(
           decoration: BoxDecoration(
-            color: Color(0xFF231942).withOpacity(0.8), // Slight transparency to match the theme
-            borderRadius: BorderRadius.vertical(
+            color: const Color(0xFF231942).withOpacity(0.8), // Slight transparency to match the theme
+            borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(20), // Rounded bottom corners
             ),
             boxShadow: [
@@ -18,7 +20,7 @@ class ShopOwnerDashboard extends StatelessWidget {
                 color: Colors.grey.withOpacity(0.5),
                 blurRadius: 5,
                 spreadRadius: 1,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -48,17 +50,17 @@ class ShopOwnerDashboard extends StatelessWidget {
                       child: TextField(
                         decoration: InputDecoration(
                           hintText: 'Search products',
-                          hintStyle: TextStyle(color: Colors.white54),
+                          hintStyle: const TextStyle(color: Colors.white54),
                           filled: true,
                           fillColor: Colors.white.withOpacity(0.3), // Slight transparency
-                          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: BorderSide.none,
                           ),
-                          prefixIcon: Icon(Icons.search, color: Color(0xFF231942)),
+                          prefixIcon: const Icon(Icons.search, color: Color(0xFF231942)),
                         ),
-                        style: TextStyle(color: Colors.white), // White text for input
+                        style: const TextStyle(color: Colors.white), // White text for input
                       ),
                     ),
                   ),
@@ -72,8 +74,8 @@ class ShopOwnerDashboard extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
+          const Padding(
+            padding: EdgeInsets.all(16.0),
             child: Text(
               "Featured Products",
               style: TextStyle(
@@ -113,13 +115,13 @@ class ShopOwnerDashboard extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: <Widget>[
           ListTile(
-            title: Text('Home'),
+            title: const Text('Home'),
             onTap: () {
               Navigator.pop(context);
             },
           ),
           ListTile(
-            title: Text('Profile'),
+            title: const Text('Profile'),
             onTap: () {
               Navigator.pop(context);
             },
@@ -139,7 +141,7 @@ class ShopOwnerDashboard extends StatelessWidget {
             color: Colors.grey.withOpacity(0.2),
             spreadRadius: 2,
             blurRadius: 4,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -157,7 +159,7 @@ class ShopOwnerDashboard extends StatelessWidget {
                 return Container(
                   height: 100,
                   color: Colors.grey[200], // Placeholder color
-                  child: Icon(
+                  child: const Icon(
                     Icons.broken_image,
                     size: 60,
                     color: Colors.grey,
@@ -166,7 +168,7 @@ class ShopOwnerDashboard extends StatelessWidget {
               },
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
               // Navigate to the CokeDetails page when the button is pressed
@@ -178,12 +180,12 @@ class ShopOwnerDashboard extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFF231942), // Updated button color
+              backgroundColor: const Color(0xFF231942), // Updated button color
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Text(
+            child: const Text(
               "View Details",
               style: TextStyle(color: Colors.white),
             ),

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignupPage extends StatefulWidget {
+  const SignupPage({super.key});
+
   @override
   _SignupPageState createState() => _SignupPageState();
 }
@@ -20,6 +24,11 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _businessLocationController = TextEditingController();
   final TextEditingController _experienceLevelController = TextEditingController();
 
+  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
+
+  bool _isLoading = false; // For button loading state
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,17 +36,16 @@ class _SignupPageState extends State<SignupPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF231942),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white), // Set icon color to white
+        iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
           "Sign Up",
           style: TextStyle(
-            color: Colors.white, // Set the title color here
-            fontWeight: FontWeight.bold, // Optional: make text bold
-            fontSize: 20.0, // Optional: adjust font size
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 20.0,
           ),
         ),
       ),
-
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -47,12 +55,12 @@ class _SignupPageState extends State<SignupPage> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Image.asset(
                         "assets/loginlogo.png",
-                        height: 150, // Adjust size if needed
+                        height: 150,
                       ),
-                      SizedBox(height: 16.0),
+                      const SizedBox(height: 16.0),
                       Form(
                         key: _formKey,
                         child: Column(
@@ -61,7 +69,7 @@ class _SignupPageState extends State<SignupPage> {
                               value: userType,
                               decoration: const InputDecoration(
                                 filled: true,
-                                fillColor: Color(0xFFE7C6FF), // Light purple
+                                fillColor: Color(0xFFE7C6FF),
                                 contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.all(Radius.circular(50)),
@@ -90,7 +98,7 @@ class _SignupPageState extends State<SignupPage> {
                               _buildTextField(_shopNameController, "Shop Name"),
                               _buildTextField(_businessLocationController, "Business Location"),
                             ] else ...[
-                                _buildTextField(_experienceLevelController, "Company"),
+                              _buildTextField(_experienceLevelController, "Company"),
                             ],
                           ],
                         ),
@@ -99,19 +107,21 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
               ElevatedButton(
-                onPressed: _submitForm,
+                onPressed: _isLoading ? null : _submitForm,
                 style: ElevatedButton.styleFrom(
                   elevation: 0,
-                  backgroundColor: const Color(0xFF8906E6), // Bold purple for button
+                  backgroundColor: const Color(0xFF8906E6),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 48),
                   shape: const StadiumBorder(),
                 ),
-                child: const Text("Sign Up"),
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Sign Up"),
               ),
-              SizedBox(height: 16.0),
+              const SizedBox(height: 16.0),
             ],
           ),
         ),
@@ -132,7 +142,7 @@ class _SignupPageState extends State<SignupPage> {
         decoration: InputDecoration(
           hintText: labelText,
           filled: true,
-          fillColor: const Color(0xFFE7C6FF), // Light purple background for input
+          fillColor: const Color(0xFFE7C6FF),
           contentPadding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
           border: const OutlineInputBorder(
             borderSide: BorderSide.none,
@@ -151,16 +161,72 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  void _submitForm() {
+  Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      // Process the form data, e.g., send to backend
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Passwords do not match!")),
+        );
+        return;
+      }
+
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        // Create user with Firebase Authentication
+        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        // After successful signup, add additional user data to Firestore
+       Map<String, dynamic> userData = {
+  'full_name': _fullNameController.text.trim(),
+  'email': _emailController.text.trim(),
+  'phone': _phoneController.text.trim(),
+  'user_type': userType,
+};
+
+// Add user-specific data based on userType
+if (userType == 'shop_owner') {
+  userData.addAll({
+    'shop_name': _shopNameController.text.trim(),
+    'business_location': _businessLocationController.text.trim(),
+  });
+
+  // Save to the 'shop_owner' collection
+  await _firestore.collection('shop_owner').doc(userCredential.user?.uid).set(userData);
+      
+} else if (userType == 'sales_representative') {
+  userData.addAll({
+    'experience_level': _experienceLevelController.text.trim(),
+  });
+
+  // Save to the 'sales-rep' collection
+  await _firestore.collection('sales-rep').doc(userCredential.user?.uid).set(userData);
+}
+
+        // Navigate to a different page or show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Sign up successful!")),
+        );
+      } on FirebaseAuthException catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Sign up failed: ${e.message}")),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }
 
 extension StringCasingExtension on String {
   String capitalize() {
-    return this.isNotEmpty ? this[0].toUpperCase() + this.substring(1) : this;
+    return isNotEmpty ? this[0].toUpperCase() + substring(1) : this;
   }
 }

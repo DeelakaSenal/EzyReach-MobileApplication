@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'login_page.dart'; // Import LoginPage to navigate to it
 
 class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,18 +28,18 @@ class LandingPage extends StatelessWidget {
                     text: TextSpan(
                       style: Theme.of(context).textTheme.headlineMedium!.copyWith(
                         fontWeight: FontWeight.w700, // Bold weight
-                        color: Color(0xFF231942), // Deep purple color for the title
+                        color: const Color(0xFF231942), // Deep purple color for the title
                         fontSize: 32, // Larger font size for prominence
                         letterSpacing: 1.2, // Spacing between letters
                         shadows: [
                           Shadow(
-                            offset: Offset(1.5, 1.5),
+                            offset: const Offset(1.5, 1.5),
                             blurRadius: 3.0,
                             color: Colors.black.withOpacity(0.2), // Soft shadow for text
                           ),
                         ],
                       ),
-                      children: [
+                      children: const [
                         TextSpan(
                           text: 'Reach your goals easily with ', // Regular text before "EZYREACH"
                         ),
@@ -60,7 +62,7 @@ class LandingPage extends StatelessWidget {
                     'EZYREACH connects sales reps and shop owners, helping you find the right partnerships and grow effortlessly.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Color(0xFF231942), // Deep purple color for description
+                      color: const Color(0xFF231942), // Deep purple color for description
                       fontSize: 18, // Slightly larger text size
                       fontWeight: FontWeight.w400, // Light weight for body text
                       height: 1.5, // Increased line height for better readability
@@ -79,7 +81,6 @@ class LandingPage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => LoginPage()),
                     );
                   },
-                  child: const Text('Get Started', style: TextStyle(fontSize: 18)),
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                     backgroundColor: const Color(0xFFFFFFFF), // Deep violet button
@@ -88,6 +89,7 @@ class LandingPage extends StatelessWidget {
                     ),
                     elevation: 5, // Button shadow for 3D effect
                   ),
+                  child: const Text('Get Started', style: TextStyle(fontSize: 18)),
                 ),
               ],
             );
