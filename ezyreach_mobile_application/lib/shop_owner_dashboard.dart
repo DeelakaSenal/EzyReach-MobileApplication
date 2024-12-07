@@ -1,8 +1,39 @@
 import 'package:flutter/material.dart';
 import 'coke_details.dart';
 
-class ShopOwnerDashboard extends StatelessWidget {
+class ShopOwnerDashboard extends StatefulWidget {
   const ShopOwnerDashboard({super.key});
+
+  @override
+  _ShopOwnerDashboardState createState() => _ShopOwnerDashboardState();
+}
+
+class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the AnimationController and SlideAnimation
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(1, 0), // Start off-screen to the right
+      end: Offset.zero, // End at the normal position
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,41 +59,49 @@ class ShopOwnerDashboard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(
-                          'assets/loginlogo.png', // Logo image
-                          width: 60, // Adjusted size for larger logo
-                          height: 60,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Search bar
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search products',
-                          hintStyle: const TextStyle(color: Colors.white54),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.3), // Slight transparency
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          prefixIcon: const Icon(Icons.search, color: Color(0xFF231942)),
-                        ),
-                        style: const TextStyle(color: Colors.white), // White text for input
-                      ),
+                  // Logo on the left
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Image.asset(
+                      'assets/loginlogo.png', // Logo image
+                      width: 60, // Adjusted size for larger logo
+                      height: 60,
+                      fit: BoxFit.contain,
                     ),
+                  ),
+                  // Search bar in the center
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search products',
+                        hintStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.3), // Slight transparency
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
+                        ),
+                        prefixIcon: const Icon(Icons.search, color: Color(0xFF231942)),
+                      ),
+                      style: const TextStyle(color: Colors.white), // White text for input
+                    ),
+                  ),
+                  // Hamburger menu with dropdown options
+                  IconButton(
+                    icon: const Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    onPressed: () {
+                      if (_animationController.isCompleted) {
+                        _animationController.reverse(); // Close the menu
+                      } else {
+                        _animationController.forward(); // Open the menu
+                      }
+                    },
                   ),
                 ],
               ),
@@ -70,61 +109,83 @@ class ShopOwnerDashboard extends StatelessWidget {
           ),
         ),
       ),
-      drawer: buildDrawer(context), // Side navigation panel (Drawer)
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              "Featured Products",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                color: Colors.black,
+          // Main content of the dashboard
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Featured Products",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Colors.black,
+                  ),
+                ),
               ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.count(
-                crossAxisCount: 2, // Two items per row
-                crossAxisSpacing: 16, // Space between columns
-                mainAxisSpacing: 16, // Space between rows
-                children: [
-                  buildProductCard('assets/coke.jpeg', context),
-                  buildProductCard('assets/elephanthouse.jpeg', context),
-                  buildProductCard('assets/unilever.jpeg', context),
-                  buildProductCard('assets/kandos.jpg', context),
-                  buildProductCard('assets/maliban.jpg', context), // New product
-                  buildProductCard('assets/munchee.png', context), // New product
-                ],
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: GridView.count(
+                    crossAxisCount: 2, // Two items per row
+                    crossAxisSpacing: 16, // Space between columns
+                    mainAxisSpacing: 16, // Space between rows
+                    children: [
+                      buildProductCard('assets/coke.jpeg', context),
+                      buildProductCard('assets/elephanthouse.jpeg', context),
+                      buildProductCard('assets/unilever.jpeg', context),
+                      buildProductCard('assets/kandos.jpg', context),
+                      buildProductCard('assets/maliban.jpg', context), // New product
+                      buildProductCard('assets/munchee.png', context), // New product
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
-        ],
-      ),
-    );
-  }
 
-  // Build the Drawer (side navigation panel)
-  Drawer buildDrawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          ListTile(
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: const Text('Profile'),
-            onTap: () {
-              Navigator.pop(context);
-            },
+          // Drawer with sliding animation (from right to left)
+          SlideTransition(
+            position: _slideAnimation,
+            child: GestureDetector(
+              onTap: () {
+                _animationController.reverse(); // Close the menu when tapped outside
+              },
+              child: Container(
+                color: Colors.black.withOpacity(0.5), // Semi-transparent overlay
+                child: Align(
+                  alignment: Alignment.centerRight, // Align the drawer on the right
+                  child: Container(
+                    width: MediaQuery.of(context).size.width / 2, // Drawer width 1/2 of screen
+                    color: Colors.white,
+                    child: Drawer(
+                      child: ListView(
+                        padding: EdgeInsets.zero,
+                        children: <Widget>[
+                          ListTile(
+                            title: const Text('Account'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              print('Account selected');
+                            },
+                          ),
+                          ListTile(
+                            title: const Text('Add New Product'),
+                            onTap: () {
+                              Navigator.pop(context);
+                              print('Add New Product selected');
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
