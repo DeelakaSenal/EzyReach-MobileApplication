@@ -21,7 +21,7 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
       duration: const Duration(milliseconds: 300),
     );
     _slideAnimation = Tween<Offset>(
-      begin: Offset(1, 0), // Start off-screen to the right
+      begin: const Offset(1, 0), // Start off-screen to the right
       end: Offset.zero, // End at the normal position
     ).animate(CurvedAnimation(
       parent: _animationController,
@@ -42,7 +42,7 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
         preferredSize: const Size.fromHeight(100), // Adjusted AppBar height for the search bar
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF231942).withOpacity(0.8), // Slight transparency to match the theme
+            color: const Color(0xFF231942).withOpacity(0.8), // Slight transparency
             borderRadius: const BorderRadius.vertical(
               bottom: Radius.circular(20), // Rounded bottom corners
             ),
@@ -65,7 +65,7 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Image.asset(
                       'assets/loginlogo.png', // Logo image
-                      width: 60, // Adjusted size for larger logo
+                      width: 60,
                       height: 60,
                       fit: BoxFit.contain,
                     ),
@@ -147,40 +147,61 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
             ],
           ),
 
-          // Drawer with sliding animation (from right to left)
+          // Drawer with sliding and fading animation
           SlideTransition(
             position: _slideAnimation,
-            child: GestureDetector(
-              onTap: () {
-                _animationController.reverse(); // Close the menu when tapped outside
-              },
-              child: Container(
-                color: Colors.black.withOpacity(0.5), // Semi-transparent overlay
-                child: Align(
-                  alignment: Alignment.centerRight, // Align the drawer on the right
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 2, // Drawer width 1/2 of screen
-                    color: Colors.white,
-                    child: Drawer(
-                      child: ListView(
-                        padding: EdgeInsets.zero,
-                        children: <Widget>[
-                          ListTile(
-                            title: const Text('Account'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              print('Account selected');
-                            },
+            child: FadeTransition( // Optional fade-in effect
+              opacity: _animationController, // Fade opacity matches animation progress
+              child: Align(
+                alignment: Alignment.centerRight, // Align the drawer on the right
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 2, // Drawer width: 1/2 of screen
+                  color: Colors.white,
+                  child: Drawer(
+                    child: Column(
+                      children: [
+                        // Removed "Menu" word and section
+                        // Menu options
+                        Expanded(
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: <Widget>[
+                              ListTile(
+                                leading: const Icon(Icons.person, color: Color(0xFF231942)),
+                                title: const Text('Account'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  print('Account selected');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.add_box, color: Color(0xFF231942)),
+                                title: const Text('Add New Product'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  print('Add New Product selected');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.info, color: Color(0xFF231942)),
+                                title: const Text('About Us'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  print('About Us selected');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.logout, color: Color(0xFF231942)),
+                                title: const Text('Logout'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  print('Logout selected');
+                                },
+                              ),
+                            ],
                           ),
-                          ListTile(
-                            title: const Text('Add New Product'),
-                            onTap: () {
-                              Navigator.pop(context);
-                              print('Add New Product selected');
-                            },
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -213,13 +234,13 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
             borderRadius: BorderRadius.circular(15),
             child: Image.asset(
               image,
-              height: 100, // Adjust the height for grid layout
-              width: double.infinity, // Make width take full space
-              fit: BoxFit.cover, // Ensures the image covers the space properly
+              height: 100,
+              width: double.infinity,
+              fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
                   height: 100,
-                  color: Colors.grey[200], // Placeholder color
+                  color: Colors.grey[200],
                   child: const Icon(
                     Icons.broken_image,
                     size: 60,
@@ -232,7 +253,6 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
           const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
-              // Navigate to the CokeDetails page when the button is pressed
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -241,7 +261,7 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF231942), // Updated button color
+              backgroundColor: const Color(0xFF231942),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
