@@ -28,82 +28,91 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text.trim();
 
     try {
-      // Use Firebase Authentication to sign in with email
+      // Sign in using Firebase Authentication
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      // After successful login, check which type of user it is (shop owner or sales rep)
       User? user = userCredential.user;
-
-      if (user != null) {
-        // Query 'shop_owner' collection to check if this user is a shop owner
-        QuerySnapshot shopOwnerSnapshot = await _firestore
-            .collection('shop_owner')
-            .where('email', isEqualTo: email)
-            .get();
-
-        if (shopOwnerSnapshot.docs.isNotEmpty) {
-          // Navigate to Shop Owner Dashboard if the user is a shop owner
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ShopOwnerDashboard(),
-            ),
-          );
-        } else {
-          // Query 'sales-rep' collection to check if this user is a sales representative
-          QuerySnapshot salesRepSnapshot = await _firestore
-              .collection('sales-rep')
-              .where('email', isEqualTo: email)
-              .get();
-
-          if (salesRepSnapshot.docs.isNotEmpty) {
-            // Navigate to Sales Rep Dashboard if the user is a sales representative
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SalesRepDashboard(),
-              ),
-            );
-          } else {
-            // If the user is neither a shop owner nor a sales rep
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('No user found in both roles')),
-            );
-          }
-        }
+      if (user == null) {
+        _showSnackbar('Login failed. Please try again.');
+        return;
       }
+
+      debugPrint('User logged in: ${user.email}');
+
+      // Check if the user is a shop owner
+      QuerySnapshot shopOwnerSnapshot = await _firestore
+          .collection('shop_owner')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (shopOwnerSnapshot.docs.isNotEmpty) {
+        debugPrint('Navigating to ShopOwnerDashboard...');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ShopOwnerDashboard()),
+        );
+        return;
+      }
+
+      // Check if the user is a sales representative
+      QuerySnapshot salesRepSnapshot = await _firestore
+          .collection('sales-rep')
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (salesRepSnapshot.docs.isNotEmpty) {
+        debugPrint('Navigating to SalesRepDashboard...');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SalesRepDashboard()),
+        );
+        return;
+      }
+
+      // No role matched
+      _showSnackbar('No user found in either role');
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No user found for that email')),
-        );
-      } else if (e.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Incorrect password')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${e.message}')),
-        );
+      debugPrint('FirebaseAuthException: ${e.code}');
+      switch (e.code) {
+        case 'user-not-found':
+          _showSnackbar('No user found for that email');
+          break;
+        case 'wrong-password':
+          _showSnackbar('Incorrect password');
+          break;
+        case 'invalid-email':
+          _showSnackbar('Invalid email address');
+          break;
+        default:
+          _showSnackbar('Error: ${e.message}');
       }
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      _showSnackbar('An unexpected error occurred. Please try again.');
     }
+  }
+
+  void _showSnackbar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   void dispose() {
-    // Dispose of focus nodes
+    // Dispose of controllers and focus nodes
     _emailFocusNode.dispose();
     _passwordFocusNode.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF231942), // Deep blue background
+      backgroundColor: const Color(0xFF231942),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -114,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                   SizedBox(height: constraints.maxHeight * 0.1),
                   Image.asset(
                     "assets/loginlogo.png",
-                    height: 200, // Adjust the size as needed
+                    height: 200,
                   ),
                   SizedBox(height: constraints.maxHeight * 0.1),
                   Text(
@@ -123,9 +132,9 @@ class _LoginPageState extends State<LoginPage> {
                         .textTheme
                         .headlineSmall!
                         .copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFFFFFFFF), // White text
-                    ),
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFFFFFFF),
+                        ),
                   ),
                   SizedBox(height: constraints.maxHeight * 0.05),
                   Form(
@@ -138,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                           decoration: const InputDecoration(
                             hintText: 'Email or Username',
                             filled: true,
-                            fillColor: Color(0xFFE7C6FF), // Light purple background for input
+                            fillColor: Color(0xFFE7C6FF),
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 24.0, vertical: 16.0),
                             border: OutlineInputBorder(
@@ -148,7 +157,6 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           keyboardType: TextInputType.emailAddress,
                           onFieldSubmitted: (_) {
-                            // Move focus to the password field when email is submitted
                             FocusScope.of(context).requestFocus(_passwordFocusNode);
                           },
                         ),
@@ -161,7 +169,7 @@ class _LoginPageState extends State<LoginPage> {
                             decoration: const InputDecoration(
                               hintText: 'Password',
                               filled: true,
-                              fillColor: Color(0xFFE7C6FF), // Light purple background for input
+                              fillColor: Color(0xFFE7C6FF),
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 24.0, vertical: 16.0),
                               border: OutlineInputBorder(
@@ -170,7 +178,6 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             onFieldSubmitted: (_) {
-                              // Trigger login when password field is submitted
                               _loginUser();
                             },
                           ),
@@ -179,7 +186,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: _loginUser,
                           style: ElevatedButton.styleFrom(
                             elevation: 0,
-                            backgroundColor: const Color(0xFF8906E6), // Bold purple for button
+                            backgroundColor: const Color(0xFF8906E6),
                             foregroundColor: Colors.white,
                             minimumSize: const Size(double.infinity, 48),
                             shape: const StadiumBorder(),
@@ -192,13 +199,12 @@ class _LoginPageState extends State<LoginPage> {
                           child: Text(
                             'Forgot Password?',
                             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: const Color(0xFFFF00E2), // Vibrant pink for text
-                            ),
+                                  color: const Color(0xFFFF00E2),
+                                ),
                           ),
                         ),
                         TextButton(
                           onPressed: () {
-                            // Navigate to SignupPage when "Sign Up" is pressed
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (context) => SignupPage()),
@@ -215,8 +221,8 @@ class _LoginPageState extends State<LoginPage> {
                               ],
                             ),
                             style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              color: const Color(0xFFFFFFFF), // White text
-                            ),
+                                  color: const Color(0xFFFFFFFF),
+                                ),
                           ),
                         ),
                       ],

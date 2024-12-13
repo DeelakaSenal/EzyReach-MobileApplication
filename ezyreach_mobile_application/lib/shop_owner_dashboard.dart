@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'coke_details.dart';
-import 'about_us.dart';
-import 'AccountPage.dart'; // Corrected file name for AccountPage
+import 'coke_details.dart'; // Ensure the `CokeDetails` page is implemented correctly
+import 'about_us.dart'; // Ensure the `AboutUsPage` page exists
+import 'AccountPage.dart'; // Ensure this matches the actual file name for the account page
 
 class ShopOwnerDashboard extends StatefulWidget {
-  const ShopOwnerDashboard({super.key});
+  const ShopOwnerDashboard({Key? key}) : super(key: key);
 
   @override
   _ShopOwnerDashboardState createState() => _ShopOwnerDashboardState();
 }
 
-class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProviderStateMixin {
+class _ShopOwnerDashboardState extends State<ShopOwnerDashboard>
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
 
@@ -34,6 +35,14 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
   void dispose() {
     _animationController.dispose();
     super.dispose();
+  }
+
+  void toggleMenu() {
+    if (_animationController.isCompleted) {
+      _animationController.reverse();
+    } else {
+      _animationController.forward();
+    }
   }
 
   @override
@@ -77,7 +86,8 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                         hintStyle: const TextStyle(color: Colors.white54),
                         filled: true,
                         fillColor: Colors.white.withOpacity(0.3),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                           borderSide: BorderSide.none,
@@ -93,13 +103,7 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                       color: Colors.white,
                       size: 28,
                     ),
-                    onPressed: () {
-                      if (_animationController.isCompleted) {
-                        _animationController.reverse();
-                      } else {
-                        _animationController.forward();
-                      }
-                    },
+                    onPressed: toggleMenu,
                   ),
                 ],
               ),
@@ -131,12 +135,12 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                     crossAxisSpacing: 16,
                     mainAxisSpacing: 16,
                     children: [
-                      buildProductCard('assets/coke.jpeg', context),
-                      buildProductCard('assets/elephanthouse.jpeg', context),
-                      buildProductCard('assets/unilever.jpeg', context),
-                      buildProductCard('assets/kandos.jpg', context),
-                      buildProductCard('assets/maliban.jpg', context),
-                      buildProductCard('assets/munchee.png', context),
+                      buildProductCard('assets/coke.jpeg', context, 'Coke Details'),
+                      buildProductCard('assets/elephanthouse.jpeg', context, 'Elephant House'),
+                      buildProductCard('assets/unilever.jpeg', context, 'Unilever'),
+                      buildProductCard('assets/kandos.jpg', context, 'Kandos'),
+                      buildProductCard('assets/maliban.jpg', context, 'Maliban'),
+                      buildProductCard('assets/munchee.png', context, 'Munchee'),
                     ],
                   ),
                 ),
@@ -160,45 +164,50 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                             padding: EdgeInsets.zero,
                             children: <Widget>[
                               ListTile(
-                                leading: const Icon(Icons.person, color: Color(0xFF231942)),
+                                leading:
+                                    const Icon(Icons.person, color: Color(0xFF231942)),
                                 title: const Text('Account'),
                                 onTap: () {
-                                  Navigator.pop(context);
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const AccountPage(),
-                                    ),
+                                        builder: (context) => const AccountPage()),
                                   );
                                 },
                               ),
                               ListTile(
-                                leading: const Icon(Icons.add_box, color: Color(0xFF231942)),
+                                leading:
+                                    const Icon(Icons.add_box, color: Color(0xFF231942)),
                                 title: const Text('Add New Product'),
                                 onTap: () {
-                                  Navigator.pop(context);
-                                  print('Add New Product selected');
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.info, color: Color(0xFF231942)),
-                                title: const Text('About Us'),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const AboutUsPage(),
-                                    ),
+                                  // Add navigation or action here
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Add New Product selected')),
                                   );
                                 },
                               ),
                               ListTile(
-                                leading: const Icon(Icons.logout, color: Color(0xFF231942)),
+                                leading:
+                                    const Icon(Icons.info, color: Color(0xFF231942)),
+                                title: const Text('About Us'),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const AboutUsPage()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading:
+                                    const Icon(Icons.logout, color: Color(0xFF231942)),
                                 title: const Text('Logout'),
                                 onTap: () {
-                                  Navigator.pop(context);
-                                  print('Logout selected');
+                                  // Add logout functionality
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Logout selected')),
+                                  );
                                 },
                               ),
                             ],
@@ -216,7 +225,7 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
     );
   }
 
-  Widget buildProductCard(String image, BuildContext context) {
+  Widget buildProductCard(String image, BuildContext context, String title) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
@@ -258,7 +267,7 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CokeDetails(),
+                  builder: (context) => CokeDetails(), // Replace with dynamic pages if needed
                 ),
               );
             },
@@ -268,9 +277,9 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: const Text(
-              "View Details",
-              style: TextStyle(color: Colors.white),
+            child: Text(
+              title,
+              style: const TextStyle(color: Colors.white),
             ),
           ),
         ],
