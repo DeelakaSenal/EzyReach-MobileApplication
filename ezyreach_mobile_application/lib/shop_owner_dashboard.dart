@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'coke_details.dart';
+import 'about_us.dart';
+import 'AccountPage.dart'; // Corrected file name for AccountPage
 
 class ShopOwnerDashboard extends StatefulWidget {
   const ShopOwnerDashboard({super.key});
@@ -15,14 +17,13 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
   @override
   void initState() {
     super.initState();
-    // Initialize the AnimationController and SlideAnimation
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(1, 0), // Start off-screen to the right
-      end: Offset.zero, // End at the normal position
+      begin: const Offset(1, 0),
+      end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -39,12 +40,12 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100), // Adjusted AppBar height for the search bar
+        preferredSize: const Size.fromHeight(100),
         child: Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF231942).withOpacity(0.8), // Slight transparency
+            color: const Color(0xFF231942).withOpacity(0.8),
             borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(20), // Rounded bottom corners
+              bottom: Radius.circular(20),
             ),
             boxShadow: [
               BoxShadow(
@@ -60,24 +61,22 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 children: [
-                  // Logo on the left
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Image.asset(
-                      'assets/loginlogo.png', // Logo image
+                      'assets/loginlogo.png',
                       width: 60,
                       height: 60,
                       fit: BoxFit.contain,
                     ),
                   ),
-                  // Search bar in the center
                   Expanded(
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search products',
                         hintStyle: const TextStyle(color: Colors.white54),
                         filled: true,
-                        fillColor: Colors.white.withOpacity(0.3), // Slight transparency
+                        fillColor: Colors.white.withOpacity(0.3),
                         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -85,10 +84,9 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                         ),
                         prefixIcon: const Icon(Icons.search, color: Color(0xFF231942)),
                       ),
-                      style: const TextStyle(color: Colors.white), // White text for input
+                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
-                  // Hamburger menu with dropdown options
                   IconButton(
                     icon: const Icon(
                       Icons.menu,
@@ -97,9 +95,9 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                     ),
                     onPressed: () {
                       if (_animationController.isCompleted) {
-                        _animationController.reverse(); // Close the menu
+                        _animationController.reverse();
                       } else {
-                        _animationController.forward(); // Open the menu
+                        _animationController.forward();
                       }
                     },
                   ),
@@ -111,7 +109,6 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
       ),
       body: Stack(
         children: [
-          // Main content of the dashboard
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -130,38 +127,34 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: GridView.count(
-                    crossAxisCount: 2, // Two items per row
-                    crossAxisSpacing: 16, // Space between columns
-                    mainAxisSpacing: 16, // Space between rows
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 16,
+                    mainAxisSpacing: 16,
                     children: [
                       buildProductCard('assets/coke.jpeg', context),
                       buildProductCard('assets/elephanthouse.jpeg', context),
                       buildProductCard('assets/unilever.jpeg', context),
                       buildProductCard('assets/kandos.jpg', context),
-                      buildProductCard('assets/maliban.jpg', context), // New product
-                      buildProductCard('assets/munchee.png', context), // New product
+                      buildProductCard('assets/maliban.jpg', context),
+                      buildProductCard('assets/munchee.png', context),
                     ],
                   ),
                 ),
               ),
             ],
           ),
-
-          // Drawer with sliding and fading animation
           SlideTransition(
             position: _slideAnimation,
-            child: FadeTransition( // Optional fade-in effect
-              opacity: _animationController, // Fade opacity matches animation progress
+            child: FadeTransition(
+              opacity: _animationController,
               child: Align(
-                alignment: Alignment.centerRight, // Align the drawer on the right
+                alignment: Alignment.centerRight,
                 child: Container(
-                  width: MediaQuery.of(context).size.width / 2, // Drawer width: 1/2 of screen
+                  width: MediaQuery.of(context).size.width / 2,
                   color: Colors.white,
                   child: Drawer(
                     child: Column(
                       children: [
-                        // Removed "Menu" word and section
-                        // Menu options
                         Expanded(
                           child: ListView(
                             padding: EdgeInsets.zero,
@@ -171,7 +164,12 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                                 title: const Text('Account'),
                                 onTap: () {
                                   Navigator.pop(context);
-                                  print('Account selected');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AccountPage(),
+                                    ),
+                                  );
                                 },
                               ),
                               ListTile(
@@ -187,7 +185,12 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                                 title: const Text('About Us'),
                                 onTap: () {
                                   Navigator.pop(context);
-                                  print('About Us selected');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AboutUsPage(),
+                                    ),
+                                  );
                                 },
                               ),
                               ListTile(
@@ -213,7 +216,6 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
     );
   }
 
-  // Build a modern card for each product
   Widget buildProductCard(String image, BuildContext context) {
     return Container(
       decoration: BoxDecoration(

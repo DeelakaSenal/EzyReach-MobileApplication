@@ -1,7 +1,40 @@
 import 'package:flutter/material.dart';
 
-class SalesRepDashboard extends StatelessWidget {
+import 'about_us.dart';
+
+class SalesRepDashboard extends StatefulWidget {
   const SalesRepDashboard({super.key});
+
+  @override
+  _SalesRepDashboardState createState() => _SalesRepDashboardState();
+}
+
+class _SalesRepDashboardState extends State<SalesRepDashboard> with TickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the AnimationController and SlideAnimation
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(1, 0), // Start off-screen to the right
+      end: Offset.zero, // End at the normal position
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,41 +60,49 @@ class SalesRepDashboard extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(
-                          'assets/loginlogo.png', // Logo image
-                          width: 60, // Adjusted size for larger logo
-                          height: 60,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
+                  // Logo on the left
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Image.asset(
+                      'assets/loginlogo.png', // Logo image
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                   // Search bar
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: 'Search shops',
-                          hintStyle: const TextStyle(color: Colors.white54),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.3), // Slight transparency
-                          contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          prefixIcon: const Icon(Icons.search, color: Color(0xFF231942)),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: 'Search shops',
+                        hintStyle: const TextStyle(color: Colors.white54),
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.3), // Slight transparency
+                        contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide.none,
                         ),
-                        style: const TextStyle(color: Colors.white), // White text for input
+                        prefixIcon: const Icon(Icons.search, color: Color(0xFF231942)),
                       ),
+                      style: const TextStyle(color: Colors.white), // White text for input
                     ),
+                  ),
+                  // Hamburger menu with animation
+                  IconButton(
+                    icon: const Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                    onPressed: () {
+                      if (_animationController.isCompleted) {
+                        _animationController.reverse(); // Close the menu
+                      } else {
+                        _animationController.forward(); // Open the menu
+                      }
+                    },
                   ),
                 ],
               ),
@@ -69,57 +110,100 @@ class SalesRepDashboard extends StatelessWidget {
           ),
         ),
       ),
-      drawer: buildDrawer(context), // Side navigation panel (Drawer)
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              "Discover shops",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 24,
-                color: Colors.black,
+          // Main content of the dashboard
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Discover shops",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: GridView.count(
+                    crossAxisCount: 2, // Two items per row
+                    crossAxisSpacing: 16, // Space between columns
+                    mainAxisSpacing: 16, // Space between rows
+                    children: List.generate(6, (index) {
+                      // Reuse the same default image for all shops
+                      return buildProductCard('assets/shopimg.jpg', context);
+                    }),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          // Sliding drawer with animation
+          SlideTransition(
+            position: _slideAnimation,
+            child: FadeTransition(
+              opacity: _animationController,
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Container(
+                  width: MediaQuery.of(context).size.width / 2, // Drawer width: 1/2 of screen
+                  color: Colors.white,
+                  child: Drawer(
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: <Widget>[
+                              ListTile(
+                                leading: const Icon(Icons.person, color: Color(0xFF231942)),
+                                title: const Text('Profile'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  print('Profile selected');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.store, color: Color(0xFF231942)),
+                                title: const Text('My Shops'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  print('My Shops selected');
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.info, color: Color(0xFF231942)),
+                                title: const Text('About Us'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  Navigator.push(
+                                context,
+                                  MaterialPageRoute(builder: (context) => const AboutUsPage()),
+                                  );
+                                },
+                              ),
+                              ListTile(
+                                leading: const Icon(Icons.logout, color: Color(0xFF231942)),
+                                title: const Text('Logout'),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  print('Logout selected');
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.count(
-                crossAxisCount: 2, // Two items per row
-                crossAxisSpacing: 16, // Space between columns
-                mainAxisSpacing: 16, // Space between rows
-                children: List.generate(6, (index) {
-                  // Reuse the same default image for all shops
-                  return buildProductCard('assets/shopimg.jpg', context);
-                }),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Build the Drawer (side navigation panel)
-  Drawer buildDrawer(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          ListTile(
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: const Text('Profile'),
-            onTap: () {
-              Navigator.pop(context);
-            },
           ),
         ],
       ),
@@ -167,7 +251,7 @@ class SalesRepDashboard extends StatelessWidget {
           ElevatedButton(
             onPressed: () {
               // Placeholder functionality
-              print("View Details clicked for $image");
+              print("Visit Shop clicked for $image");
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF231942), // Updated button color
@@ -176,7 +260,7 @@ class SalesRepDashboard extends StatelessWidget {
               ),
             ),
             child: const Text(
-              "Visit shop",
+              "Visit Shop",
               style: TextStyle(color: Colors.white),
             ),
           ),
