@@ -15,7 +15,6 @@ class _SignupPageState extends State<SignupPage> {
   String userType = 'shop_owner';
 
   // Form Field Controllers
-  final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -23,6 +22,8 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _shopNameController = TextEditingController();
   final TextEditingController _businessLocationController = TextEditingController();
   final TextEditingController _experienceLevelController = TextEditingController();
+  final TextEditingController _companyNameController = TextEditingController();
+  final TextEditingController _companyLocationController = TextEditingController();
 
   final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
@@ -81,7 +82,7 @@ class _SignupPageState extends State<SignupPage> {
                                   userType = newValue!;
                                 });
                               },
-                              items: <String>['shop_owner', 'sales_representative']
+                              items: <String>['shop_owner', 'sales_representative', 'company']
                                   .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value,
@@ -89,7 +90,10 @@ class _SignupPageState extends State<SignupPage> {
                                 );
                               }).toList(),
                             ),
-                            _buildTextField(_fullNameController, "Full Name"),
+                            if (userType == 'company') ...[
+                              _buildTextField(_companyNameController, "Company Name"),
+                              _buildTextField(_companyLocationController, "Company Location"),
+                            ],
                             _buildTextField(_emailController, "Email", keyboardType: TextInputType.emailAddress),
                             _buildTextField(_phoneController, "Phone Number", keyboardType: TextInputType.phone),
                             _buildTextField(_passwordController, "Password", obscureText: true),
@@ -97,7 +101,7 @@ class _SignupPageState extends State<SignupPage> {
                             if (userType == 'shop_owner') ...[
                               _buildTextField(_shopNameController, "Shop Name"),
                               _buildTextField(_businessLocationController, "Business Location"),
-                            ] else ...[
+                            ] else if (userType == 'sales_representative') ...[
                               _buildTextField(_experienceLevelController, "Company"),
                             ],
                           ],
@@ -182,31 +186,37 @@ class _SignupPageState extends State<SignupPage> {
         );
 
         // After successful signup, add additional user data to Firestore
-       Map<String, dynamic> userData = {
-  'full_name': _fullNameController.text.trim(),
-  'email': _emailController.text.trim(),
-  'phone': _phoneController.text.trim(),
-  'user_type': userType,
-};
+        Map<String, dynamic> userData = {
+          'email': _emailController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'user_type': userType,
+        };
 
-// Add user-specific data based on userType
-if (userType == 'shop_owner') {
-  userData.addAll({
-    'shop_name': _shopNameController.text.trim(),
-    'business_location': _businessLocationController.text.trim(),
-  });
+        // Add user-specific data based on userType
+        if (userType == 'shop_owner') {
+          userData.addAll({
+            'shop_name': _shopNameController.text.trim(),
+            'business_location': _businessLocationController.text.trim(),
+          });
 
-  // Save to the 'shop_owner' collection
-  await _firestore.collection('shop_owner').doc(userCredential.user?.uid).set(userData);
-      
-} else if (userType == 'sales_representative') {
-  userData.addAll({
-    'experience_level': _experienceLevelController.text.trim(),
-  });
+          // Save to the 'shop_owner' collection
+          await _firestore.collection('shop_owner').doc(userCredential.user?.uid).set(userData);
+        } else if (userType == 'sales_representative') {
+          userData.addAll({
+            'experience_level': _experienceLevelController.text.trim(),
+          });
 
-  // Save to the 'sales-rep' collection
-  await _firestore.collection('sales-rep').doc(userCredential.user?.uid).set(userData);
-}
+          // Save to the 'sales-rep' collection
+          await _firestore.collection('sales-rep').doc(userCredential.user?.uid).set(userData);
+        } else if (userType == 'company') {
+          userData.addAll({
+            'companyName': _companyNameController.text.trim(),
+            'companyLocation': _companyLocationController.text.trim(),
+          });
+
+          // Save to the 'company' collection
+          await _firestore.collection('company').doc(userCredential.user?.uid).set(userData);
+        }
 
         // Navigate to a different page or show success message
         ScaffoldMessenger.of(context).showSnackBar(

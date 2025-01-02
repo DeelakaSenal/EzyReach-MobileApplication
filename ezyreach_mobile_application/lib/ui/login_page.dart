@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'shop_owner_dashboard.dart'; // Import ShopOwnerDashboard page
 import 'sales_rep_dashboard.dart'; // Import SalesRepDashboard page
+import 'company_dashboard.dart'; // Import CompanyDashboard page
 import 'signup_page.dart'; // Import SignupPage
 
 class LoginPage extends StatefulWidget {
@@ -72,8 +73,23 @@ class _LoginPageState extends State<LoginPage> {
         return;
       }
 
+      // Check if the user is a company
+      QuerySnapshot companySnapshot = await _firestore
+          .collection('company') // assuming you have a 'company' collection
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (companySnapshot.docs.isNotEmpty) {
+        debugPrint('Navigating to CompanyDashboard...');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => CompanyDashboard()), // Navigate to CompanyDashboard
+        );
+        return;
+      }
+
       // No role matched
-      _showSnackbar('No user found in either role');
+      _showSnackbar('No user found in any role');
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException: ${e.code}');
       switch (e.code) {
