@@ -1,100 +1,62 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart'; // Import LoginPage to navigate to it
+import 'login_page.dart'; // Import the LoginPage class
 
-class LandingPage extends StatelessWidget {
+class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
+  @override
+  _LandingPageState createState() => _LandingPageState();
+}
+
+class _LandingPageState extends State<LandingPage> {
+  double _progress = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _startLoading();
+  }
+
+  void _startLoading() async {
+    while (_progress < 1.0) {
+      await Future.delayed(const Duration(milliseconds: 10));
+      setState(() {
+        _progress += 0.01;
+      });
+    }
+
+    // Navigate to the LoginPage once loading is complete
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()), // Replace with your LoginPage class
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFE7C6FF), // Soft lavender background
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(height: constraints.maxHeight * 0.05),
-                // Logo Image
-                Image.asset('assets/loginlogo.png', height: 200), // Replace with your image path
-
-                SizedBox(height: constraints.maxHeight * 0.05),
-                // Title Text with highlighted "EZYREACH"
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                        fontWeight: FontWeight.w700, // Bold weight
-                        color: const Color(0xFF231942), // Deep purple color for the title
-                        fontSize: 32, // Larger font size for prominence
-                        letterSpacing: 1.2, // Spacing between letters
-                        shadows: [
-                          Shadow(
-                            offset: const Offset(1.5, 1.5),
-                            blurRadius: 3.0,
-                            color: Colors.black.withOpacity(0.2), // Soft shadow for text
-                          ),
-                        ],
-                      ),
-                      children: const [
-                        TextSpan(
-                          text: 'Reach your goals easily with ', // Regular text before "EZYREACH"
-                        ),
-                        TextSpan(
-                          text: 'EZYREACH', // Highlighted part
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF5F4C6E), // Deep violet color for "EZYREACH"
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: constraints.maxHeight * 0.03),
-                // Description Text
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'EZYREACH connects sales reps and shop owners, helping you find the right partnerships and grow effortlessly.',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: const Color(0xFF231942), // Deep purple color for description
-                      fontSize: 18, // Slightly larger text size
-                      fontWeight: FontWeight.w400, // Light weight for body text
-                      height: 1.5, // Increased line height for better readability
-                      letterSpacing: 0.5, // Slight letter-spacing for readability
-                    ),
-                  ),
-                ),
-                SizedBox(height: constraints.maxHeight * 0.05), // Space for button
-
-                // Get Started Button
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to the login page when button is pressed
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                    backgroundColor: const Color(0xFFFFFFFF), // Deep violet button
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30), // Rounded corners
-                    ),
-                    elevation: 5, // Button shadow for 3D effect
-                  ),
-                  child: const Text('Get Started', style: TextStyle(fontSize: 18)),
-                ),
-              ],
-            );
-          },
-        ),
+      backgroundColor: Colors.white, // White background
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Logo image
+          Image.asset(
+            'assets/loginlogo.png', // Replace with your image path
+            height: 130, // Set the desired height for the image
+          ),
+          const SizedBox(height: 8), // Space between logo and progress bar
+          // LinearProgressIndicator
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 130.0), // Add padding to the sides
+            child: LinearProgressIndicator(
+              borderRadius: BorderRadius.circular(10),
+              value: _progress,
+              backgroundColor: Colors.white,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple), // Progress color
+              minHeight: 5, // Height of the progress bar
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,3 +1,6 @@
+import 'package:ezyreach_mobile_application/ui/company_dashboard.dart';
+import 'package:ezyreach_mobile_application/ui/shop_owner_dashboard.dart';
+import 'package:ezyreach_mobile_application/ui/sales_rep_dashboard.dart';
 import 'package:firebase_core/firebase_core.dart'; // Import Firebase Core
 import 'firebase_options.dart'; // Import Firebase options
 import 'package:flutter/material.dart'; // Import Material package

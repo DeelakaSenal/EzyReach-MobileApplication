@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'shop_owner_dashboard.dart'; // Import ShopOwnerDashboard page
-import 'sales_rep_dashboard.dart'; // Import SalesRepDashboard page
-import 'company_dashboard.dart'; // Import CompanyDashboard page
-import 'signup_page.dart'; // Import SignupPage
+import '../ui/shop_owner_dashboard.dart'; // Import ShopOwnerDashboard page
+import '../ui/sales_rep_dashboard.dart'; // Import SalesRepDashboard page
+import '../ui/company_dashboard.dart'; // Import CompanyDashboard page
+import '../ui/signup_page.dart'; // Import SignupPage
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});

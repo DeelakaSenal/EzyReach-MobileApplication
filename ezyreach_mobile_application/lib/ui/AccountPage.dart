@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AccountPage extends StatefulWidget {
-  const AccountPage({super.key});
+  final String collectionType;
+
+  const AccountPage({super.key, required this.collectionType});
 
   @override
   _AccountPageState createState() => _AccountPageState();
@@ -27,7 +29,7 @@ class _AccountPageState extends State<AccountPage> {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
         DocumentSnapshot snapshot = await _firestore
-            .collection('shop_owner') // Adjust collection if needed
+            .collection(widget.collectionType) // Dynamic collection
             .doc(currentUser.uid)
             .get();
 
@@ -54,6 +56,7 @@ class _AccountPageState extends State<AccountPage> {
       MaterialPageRoute(
         builder: (context) => EditAccountPage(
           accountData: _accountData!,
+          collectionType: widget.collectionType, // Pass collection type
         ),
       ),
     ).then((_) => _fetchAccountDetails()); // Refresh details after editing
@@ -75,20 +78,20 @@ class _AccountPageState extends State<AccountPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _accountData == null
-              ? const Center(child: Text("No account details available"))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildDetailCard("Full Name", _accountData!['full_name']),
-                      _buildDetailCard("Email", _accountData!['email']),
-                      _buildDetailCard("Phone", _accountData!['phone']),
-                      _buildDetailCard("Shop Name", _accountData!['shop_name']),
-                      _buildDetailCard("Business Location", _accountData!['business_location']),
-                    ],
-                  ),
-                ),
+          ? const Center(child: Text("No account details available"))
+          : Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDetailCard("Full Name", _accountData!['full_name']),
+            _buildDetailCard("Email", _accountData!['email']),
+            _buildDetailCard("Phone", _accountData!['phone']),
+            _buildDetailCard("Shop Name", _accountData!['shop_name']),
+            _buildDetailCard("Business Location", _accountData!['business_location']),
+          ],
+        ),
+      ),
     );
   }
 
@@ -119,8 +122,9 @@ class _AccountPageState extends State<AccountPage> {
 
 class EditAccountPage extends StatefulWidget {
   final Map<String, dynamic> accountData;
+  final String collectionType;
 
-  const EditAccountPage({super.key, required this.accountData});
+  const EditAccountPage({super.key, required this.accountData, required this.collectionType});
 
   @override
   _EditAccountPageState createState() => _EditAccountPageState();
@@ -148,7 +152,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
       try {
         User? currentUser = FirebaseAuth.instance.currentUser;
         if (currentUser != null) {
-          await _firestore.collection('shop_owner').doc(currentUser.uid).update({
+          await _firestore.collection(widget.collectionType).doc(currentUser.uid).update({
             'full_name': _fullNameController.text,
             'phone': _phoneController.text,
             'shop_name': _shopNameController.text,
@@ -157,7 +161,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Account details updated successfully!")),
           );
-          Navigator.pop(context); // Close the EditAccountPage and go back to AccountPage
+          Navigator.pop(context);
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -217,7 +221,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
             borderRadius: BorderRadius.circular(12.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
+            borderRadius: BorderRadius. circular(12.0),
             borderSide: const BorderSide(color: Color(0xFF231942), width: 2),
           ),
         ),
@@ -227,3 +231,4 @@ class _EditAccountPageState extends State<EditAccountPage> {
     );
   }
 }
+
