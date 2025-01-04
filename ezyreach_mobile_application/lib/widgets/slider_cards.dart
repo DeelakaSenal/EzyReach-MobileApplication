@@ -2,16 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 class CardData {
-  final String title;
-  final String content;
-  final IconData icon;
-  final Color color;
+  final String imagePath; // Keep only the imagePath for simplicity
 
   CardData({
-    required this.title,
-    required this.content,
-    required this.icon,
-    required this.color,
+    required this.imagePath,
   });
 }
 
@@ -64,7 +58,7 @@ class _SliderCardsState extends State<SliderCards> {
     return Column(
       children: [
         Container(
-          height: 200,
+          height: 250, // Adjust height to fit the images
           margin: const EdgeInsets.only(top: 16, bottom: 16),
           child: PageView.builder(
             controller: _pageController,
@@ -81,7 +75,6 @@ class _SliderCardsState extends State<SliderCards> {
                   return Container(
                     margin: const EdgeInsets.symmetric(horizontal: 5),
                     decoration: BoxDecoration(
-                      color: widget.cards[index].color,
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
@@ -91,35 +84,11 @@ class _SliderCardsState extends State<SliderCards> {
                         ),
                       ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            widget.cards[index].icon,
-                            color: Colors.white,
-                            size: 32,
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            widget.cards[index].title,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            widget.cards[index].content,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15), // Add rounded corners
+                      child: Image.asset(
+                        widget.cards[index].imagePath,
+                        fit: BoxFit.cover, // Make the image cover the entire card
                       ),
                     ),
                   );

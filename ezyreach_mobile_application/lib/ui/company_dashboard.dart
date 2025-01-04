@@ -112,24 +112,9 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
               children: [
                 SliderCards(
                   cards: [
-                    CardData(
-                      title: "Company Overview",
-                      content: "View and manage your company details.",
-                      icon: Icons.business,
-                      color: const Color(0xFF8906E6),
-                    ),
-                    CardData(
-                      title: "Team Management",
-                      content: "Manage your team and their roles.",
-                      icon: Icons.group,
-                      color: const Color(0xFF050DEB),
-                    ),
-                    CardData(
-                      title: "Reports",
-                      content: "Generate and view reports.",
-                      icon: Icons.bar_chart,
-                      color: const Color(0xFF231942),
-                    ),
+                    CardData(imagePath: 'assets/slider1.png'),
+                    CardData(imagePath: 'assets/slider2.png'),
+                    CardData(imagePath: 'assets/slider3.png'),
                   ],
                 ),
                 const Padding(

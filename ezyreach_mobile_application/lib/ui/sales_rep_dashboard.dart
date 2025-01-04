@@ -19,24 +19,9 @@ class _SalesRepDashboardState extends State<SalesRepDashboard> with TickerProvid
   bool isMenuOpen = false;
 
   final List<CardData> _cards = [
-    CardData(
-      title: "Today's Updates",
-      content: "10 new shops added in your area",
-      icon: Icons.update,
-      color: Color(0xFF5C4B99),
-    ),
-    CardData(
-      title: "Performance",
-      content: "Your visits are up by 25%",
-      icon: Icons.trending_up,
-      color: Color(0xFF9F91CC),
-    ),
-    CardData(
-      title: "Tasks",
-      content: "5 pending shop visits",
-      icon: Icons.task_alt,
-      color: Color(0xFFA459D1),
-    ),
+    CardData(imagePath: 'assets/slider1.png'),
+    CardData(imagePath: 'assets/slider2.png'),
+    CardData(imagePath: 'assets/slider3.png'),
   ];
 
   @override

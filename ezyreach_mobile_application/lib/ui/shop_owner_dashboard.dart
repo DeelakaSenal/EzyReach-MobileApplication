@@ -20,24 +20,9 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
   bool isMenuOpen = false;
 
   final List<CardData> cardDataList = [
-    CardData(
-      title: 'Product 1',
-      content: 'Details about Product 1',
-      icon: Icons.shopping_cart,
-      color: Colors.blue,
-    ),
-    CardData(
-      title: 'Product 2',
-      content: 'Details about Product 2',
-      icon: Icons.local_offer,
-      color: Colors.green,
-    ),
-    CardData(
-      title: 'Product 3',
-      content: 'Details about Product 3',
-      icon: Icons.star,
-      color: Colors.orange,
-    ),
+    CardData(imagePath: 'assets/slider1.png'),
+    CardData(imagePath: 'assets/slider2.png'),
+    CardData(imagePath: 'assets/slider3.png'),
   ];
 
   @override
