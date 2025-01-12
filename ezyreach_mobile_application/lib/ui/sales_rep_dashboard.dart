@@ -114,6 +114,7 @@ class _SalesRepDashboardState extends State<SalesRepDashboard> with TickerProvid
         }
       },
       child: Scaffold(
+        backgroundColor: const Color(0xFFF3E5F5),
         appBar: CustomAppBar(
           onMenuPressed: _toggleMenu,
           menuRotationAnimation: _menuRotationAnimation,

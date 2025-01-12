@@ -11,8 +11,9 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
-
   String userType = 'shop_owner';
+  String? selectedCompany;
+  List<String> companies = [];
 
   // Form Field Controllers
   final TextEditingController _emailController = TextEditingController();
@@ -21,19 +22,38 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController _confirmPasswordController = TextEditingController();
   final TextEditingController _shopNameController = TextEditingController();
   final TextEditingController _businessLocationController = TextEditingController();
-  final TextEditingController _experienceLevelController = TextEditingController();
   final TextEditingController _companyNameController = TextEditingController();
   final TextEditingController _companyLocationController = TextEditingController();
+  final TextEditingController _branchLocationController = TextEditingController();
 
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  bool _isLoading = false; // For button loading state
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchCompanies();
+  }
+
+  Future<void> _fetchCompanies() async {
+    try {
+      final QuerySnapshot companySnapshot = await _firestore.collection('company').get();
+      setState(() {
+        companies = companySnapshot.docs
+            .map((doc) => (doc.data() as Map<String, dynamic>)['companyName'] as String)
+            .toList();
+      });
+    } catch (e) {
+      print('Error fetching companies: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xA9231942), // Deep blue background
+      backgroundColor: const Color(0xA9231942),
       appBar: AppBar(
         backgroundColor: const Color(0xFF231942),
         elevation: 0,
@@ -80,6 +100,7 @@ class _SignupPageState extends State<SignupPage> {
                               onChanged: (String? newValue) {
                                 setState(() {
                                   userType = newValue!;
+                                  selectedCompany = null; // Reset selected company when user type changes
                                 });
                               },
                               items: <String>['shop_owner', 'sales_representative', 'company']
@@ -102,7 +123,8 @@ class _SignupPageState extends State<SignupPage> {
                               _buildTextField(_shopNameController, "Shop Name"),
                               _buildTextField(_businessLocationController, "Business Location"),
                             ] else if (userType == 'sales_representative') ...[
-                              _buildTextField(_experienceLevelController, "Company"),
+                              _buildCompanyDropdown(),
+                              _buildTextField(_branchLocationController, "Branch Location"),
                             ],
                           ],
                         ),
@@ -129,6 +151,42 @@ class _SignupPageState extends State<SignupPage> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildCompanyDropdown() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<String>(
+        value: selectedCompany,
+        decoration: const InputDecoration(
+          hintText: "Select Company",
+          filled: true,
+          fillColor: Color(0xFFE7C6FF),
+          contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+            borderRadius: BorderRadius.all(Radius.circular(50)),
+          ),
+        ),
+        items: companies.map((String company) {
+          return DropdownMenuItem<String>(
+            value: company,
+            child: Text(company),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {
+            selectedCompany = newValue;
+          });
+        },
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please select a company';
+          }
+          return null;
+        },
       ),
     );
   }
@@ -179,46 +237,37 @@ class _SignupPageState extends State<SignupPage> {
       });
 
       try {
-        // Create user with Firebase Authentication
         UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
 
-        // After successful signup, add additional user data to Firestore
         Map<String, dynamic> userData = {
           'email': _emailController.text.trim(),
           'phone': _phoneController.text.trim(),
           'user_type': userType,
         };
 
-        // Add user-specific data based on userType
         if (userType == 'shop_owner') {
           userData.addAll({
             'shop_name': _shopNameController.text.trim(),
             'business_location': _businessLocationController.text.trim(),
           });
-
-          // Save to the 'shop_owner' collection
           await _firestore.collection('shop_owner').doc(userCredential.user?.uid).set(userData);
         } else if (userType == 'sales_representative') {
           userData.addAll({
-            'experience_level': _experienceLevelController.text.trim(),
+            'company': selectedCompany,
+            'branchLocation': _branchLocationController.text.trim(),
           });
-
-          // Save to the 'sales-rep' collection
           await _firestore.collection('sales-rep').doc(userCredential.user?.uid).set(userData);
         } else if (userType == 'company') {
           userData.addAll({
             'companyName': _companyNameController.text.trim(),
             'companyLocation': _companyLocationController.text.trim(),
           });
-
-          // Save to the 'company' collection
           await _firestore.collection('company').doc(userCredential.user?.uid).set(userData);
         }
 
-        // Navigate to a different page or show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Sign up successful!")),
         );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/slider_cards.dart'; // Replace with the actual path to your SliderCards file
 import '../widgets/app_bar.dart'; // Replace with the actual path to your CustomAppBar file
 import '../widgets/ham_menu.dart'; // Replace with the actual path to your CustomDrawer file
-
+import 'about_us.dart';
 class CompanyDashboard extends StatefulWidget {
   const CompanyDashboard({super.key});
 
@@ -100,6 +100,7 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
         }
       },
       child: Scaffold(
+        backgroundColor: const Color(0xFFF3E5F5),
         appBar: CustomAppBar(
           onMenuPressed: _toggleMenu,
           menuRotationAnimation: _menuRotationAnimation,
