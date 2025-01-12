@@ -130,6 +130,41 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                  child: Container(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        print('Add Product button pressed');
+                      },
+                      icon: const Icon(
+                        Icons.add_outlined,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      label: const Text(
+                        "Add Product",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFB077E3).withOpacity(0.5),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 SliderCards(cards: cardDataList),
                 const Padding(
                   padding: EdgeInsets.all(16.0),

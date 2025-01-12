@@ -1,55 +1,60 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 class CardData {
-  final String imagePath; // Keep only the imagePath for simplicity
-
-  CardData({
-    required this.imagePath,
-  });
+  final String imagePath;
+  CardData({required this.imagePath});
 }
 
 class SliderCards extends StatefulWidget {
   final List<CardData> cards;
 
   const SliderCards({
-    super.key,
+    Key? key,
     required this.cards,
-  });
+  }) : super(key: key);
 
   @override
-  _SliderCardsState createState() => _SliderCardsState();
+  State<SliderCards> createState() => _SliderCardsState();
 }
 
 class _SliderCardsState extends State<SliderCards> {
   late PageController _pageController;
-  Timer? _timer;
   int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.9);
-
+    _pageController = PageController(
+      viewportFraction: 0.85, // Shows a bit of next/previous cards
+      initialPage: 0,
+    );
     // Auto-scroll timer
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < widget.cards.length - 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
+    Future.delayed(const Duration(seconds: 1), () {
+      _autoScroll();
+    });
+  }
+
+  void _autoScroll() {
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) {
+        if (_currentPage < widget.cards.length - 1) {
+          _currentPage++;
+        } else {
+          _currentPage = 0;
+        }
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeInOut,
+        );
+        _autoScroll();
       }
-      _pageController.animateToPage(
-        _currentPage,
-        duration: const Duration(milliseconds: 350),
-        curve: Curves.easeIn,
-      );
     });
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _timer?.cancel();
     super.dispose();
   }
 
@@ -57,14 +62,13 @@ class _SliderCardsState extends State<SliderCards> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Container(
-          height: 250, // Adjust height to fit the images
-          margin: const EdgeInsets.only(top: 16, bottom: 16),
+        SizedBox(
+          height: 200, // Adjust height as needed
           child: PageView.builder(
             controller: _pageController,
-            onPageChanged: (int page) {
+            onPageChanged: (index) {
               setState(() {
-                _currentPage = page;
+                _currentPage = index;
               });
             },
             itemCount: widget.cards.length,
@@ -72,31 +76,44 @@ class _SliderCardsState extends State<SliderCards> {
               return AnimatedBuilder(
                 animation: _pageController,
                 builder: (context, child) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 4,
-                          spreadRadius: 1,
-                        ),
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15), // Add rounded corners
-                      child: Image.asset(
-                        widget.cards[index].imagePath,
-                        fit: BoxFit.cover, // Make the image cover the entire card
-                      ),
+                  double value = 1.0;
+                  if (_pageController.position.haveDimensions) {
+                    value = _pageController.page! - index;
+                    value = (1 - (value.abs() * 0.3)).clamp(0.0, 1.0);
+                  }
+                  return Center(
+                    child: SizedBox(
+                      height: Curves.easeOut.transform(value) * 200,
+                      width: Curves.easeOut.transform(value) * 350,
+                      child: child,
                     ),
                   );
                 },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Image.asset(
+                      widget.cards[index].imagePath,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
               );
             },
           ),
         ),
+        const SizedBox(height: 20),
         // Page indicator dots
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -109,8 +126,8 @@ class _SliderCardsState extends State<SliderCards> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: _currentPage == index
-                    ? const Color(0xFF231942)
-                    : Colors.grey.withOpacity(0.3),
+                    ? const Color(0xFF8906E6)
+                    : Colors.grey.shade300,
               ),
             ),
           ),

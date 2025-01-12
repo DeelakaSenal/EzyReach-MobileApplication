@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// Main Account Page
 class AccountPage extends StatefulWidget {
   final String collectionType;
 
-  const AccountPage({super.key, required this.collectionType});
+  const AccountPage({Key? key, required this.collectionType}) : super(key: key);
 
   @override
   _AccountPageState createState() => _AccountPageState();
@@ -29,7 +30,7 @@ class _AccountPageState extends State<AccountPage> {
       User? currentUser = _auth.currentUser;
       if (currentUser != null) {
         DocumentSnapshot snapshot = await _firestore
-            .collection(widget.collectionType) // Dynamic collection
+            .collection(widget.collectionType)
             .doc(currentUser.uid)
             .get();
 
@@ -56,10 +57,10 @@ class _AccountPageState extends State<AccountPage> {
       MaterialPageRoute(
         builder: (context) => EditAccountPage(
           accountData: _accountData!,
-          collectionType: widget.collectionType, // Pass collection type
+          collectionType: widget.collectionType,
         ),
       ),
-    ).then((_) => _fetchAccountDetails()); // Refresh details after editing
+    ).then((_) => _fetchAccountDetails());
   }
 
   @override
@@ -83,48 +84,46 @@ class _AccountPageState extends State<AccountPage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildDetailCard("Full Name", _accountData!['full_name']),
-            _buildDetailCard("Email", _accountData!['email']),
-            _buildDetailCard("Phone", _accountData!['phone']),
-            _buildDetailCard("Shop Name", _accountData!['shop_name']),
-            _buildDetailCard("Business Location", _accountData!['business_location']),
-          ],
+          children: _buildAccountDetails(),
         ),
       ),
     );
   }
 
-  Widget _buildDetailCard(String title, String? value) {
-    return Card(
-      elevation: 5,
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),
-            ),
-            Text(
-              value ?? 'N/A',
-              style: const TextStyle(fontSize: 18.0, color: Colors.grey),
-            ),
-          ],
+  List<Widget> _buildAccountDetails() {
+    return _accountData!.entries.map((entry) {
+      return Card(
+        elevation: 5,
+        margin: const EdgeInsets.symmetric(vertical: 8.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                entry.key.replaceAll('_', ' ').toUpperCase(),
+                style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                entry.value ?? 'N/A',
+                style: const TextStyle(fontSize: 18.0, color: Colors.grey),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }).toList();
   }
 }
 
+// Edit Account Page
 class EditAccountPage extends StatefulWidget {
   final Map<String, dynamic> accountData;
   final String collectionType;
 
-  const EditAccountPage({super.key, required this.accountData, required this.collectionType});
+  const EditAccountPage({Key? key, required this.accountData, required this.collectionType})
+      : super(key: key);
 
   @override
   _EditAccountPageState createState() => _EditAccountPageState();
@@ -133,18 +132,19 @@ class EditAccountPage extends StatefulWidget {
 class _EditAccountPageState extends State<EditAccountPage> {
   final _formKey = GlobalKey<FormState>();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  late TextEditingController _fullNameController;
-  late TextEditingController _phoneController;
-  late TextEditingController _shopNameController;
-  late TextEditingController _businessLocationController;
+
+  late Map<String, TextEditingController> _controllers;
 
   @override
   void initState() {
     super.initState();
-    _fullNameController = TextEditingController(text: widget.accountData['full_name']);
-    _phoneController = TextEditingController(text: widget.accountData['phone']);
-    _shopNameController = TextEditingController(text: widget.accountData['shop_name']);
-    _businessLocationController = TextEditingController(text: widget.accountData['business_location']);
+    _initializeControllers();
+  }
+
+  void _initializeControllers() {
+    _controllers = widget.accountData.map((key, value) {
+      return MapEntry(key, TextEditingController(text: value?.toString() ?? ""));
+    });
   }
 
   Future<void> _saveChanges() async {
@@ -152,12 +152,13 @@ class _EditAccountPageState extends State<EditAccountPage> {
       try {
         User? currentUser = FirebaseAuth.instance.currentUser;
         if (currentUser != null) {
-          await _firestore.collection(widget.collectionType).doc(currentUser.uid).update({
-            'full_name': _fullNameController.text,
-            'phone': _phoneController.text,
-            'shop_name': _shopNameController.text,
-            'business_location': _businessLocationController.text,
+          Map<String, dynamic> updatedData = {};
+          _controllers.forEach((key, controller) {
+            updatedData[key] = controller.text;
           });
+
+          await _firestore.collection(widget.collectionType).doc(currentUser.uid).update(updatedData);
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text("Account details updated successfully!")),
           );
@@ -184,10 +185,7 @@ class _EditAccountPageState extends State<EditAccountPage> {
           key: _formKey,
           child: ListView(
             children: [
-              _buildTextFormField(_fullNameController, "Full Name"),
-              _buildTextFormField(_phoneController, "Phone", keyboardType: TextInputType.phone),
-              _buildTextFormField(_shopNameController, "Shop Name"),
-              _buildTextFormField(_businessLocationController, "Business Location"),
+              ..._buildFormFields(),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _saveChanges,
@@ -210,25 +208,25 @@ class _EditAccountPageState extends State<EditAccountPage> {
     );
   }
 
-  Widget _buildTextFormField(TextEditingController controller, String label, {TextInputType keyboardType = TextInputType.text}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.0),
+  List<Widget> _buildFormFields() {
+    return _controllers.entries.map((entry) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16.0),
+        child: TextFormField(
+          controller: entry.value,
+          decoration: InputDecoration(
+            labelText: entry.key.replaceAll('_', ' ').toUpperCase(),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: const BorderSide(color: Color(0xFF231942), width: 2),
+            ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius. circular(12.0),
-            borderSide: const BorderSide(color: Color(0xFF231942), width: 2),
-          ),
+          validator: (value) => value!.isEmpty ? "This field cannot be empty" : null,
         ),
-        keyboardType: keyboardType,
-        validator: (value) => value!.isEmpty ? "This field cannot be empty" : null,
-      ),
-    );
+      );
+    }).toList();
   }
 }
-

@@ -3,6 +3,7 @@ import '../widgets/slider_cards.dart'; // Replace with the actual path to your S
 import '../widgets/app_bar.dart'; // Replace with the actual path to your CustomAppBar file
 import '../widgets/ham_menu.dart'; // Replace with the actual path to your CustomDrawer file
 import 'about_us.dart';
+import 'AccountPage.dart';
 class CompanyDashboard extends StatefulWidget {
   const CompanyDashboard({super.key});
 
@@ -64,7 +65,10 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
         title: 'Company Profile',
         onTap: () {
           _toggleMenu();
-          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) =>const AccountPage(collectionType: 'company')),
+          );
         },
       ),
       DrawerMenuItem(
@@ -80,7 +84,10 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
         title: 'About us',
         onTap: () {
           _toggleMenu();
-          Navigator.pop(context);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AboutUsPage()),
+          );
         },
       ),
       DrawerMenuItem(

@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue, // Theme color
       ),
-      home: const ShopOwnerDashboard(), // Landing page
+      home: const LandingPage(), // Landing page
       locale: DevicePreview.locale(context), // Add locale for DevicePreview
       builder: DevicePreview.appBuilder, // Integrate DevicePreview builder
     );
