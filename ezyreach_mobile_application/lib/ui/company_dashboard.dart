@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import '../widgets/slider_cards.dart'; // Replace with the actual path to your SliderCards file
-import '../widgets/app_bar.dart'; // Replace with the actual path to your CustomAppBar file
-import '../widgets/ham_menu.dart'; // Replace with the actual path to your CustomDrawer file
+import '../widgets/slider_cards.dart'; // Replace with actual path
+import '../widgets/app_bar.dart'; // Replace with actual path
+import '../widgets/ham_menu.dart'; // Replace with actual path
 import 'about_us.dart';
 import 'AccountPage.dart';
+import 'add_product.dart';
+import 'product_list_page.dart';
 class CompanyDashboard extends StatefulWidget {
   const CompanyDashboard({super.key});
 
@@ -67,16 +69,30 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
           _toggleMenu();
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) =>const AccountPage(collectionType: 'company')),
+            MaterialPageRoute(builder: (context) => const AccountPage(collectionType: 'company')),
           );
         },
       ),
       DrawerMenuItem(
         icon: Icons.add_box_outlined,
-        title: 'Products',
+        title: 'Add Product',
         onTap: () {
           _toggleMenu();
-          Navigator.pop(context);
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AddProductPage()),
+          );
+        },
+      ),
+      DrawerMenuItem(
+        icon: Icons.list,
+        title: 'Product List',
+        onTap: () {
+          _toggleMenu();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ProductListPage()),
+          );
         },
       ),
       DrawerMenuItem(
@@ -115,10 +131,13 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
         ),
         body: Stack(
           children: [
+
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 20.0),
                 SliderCards(
+
                   cards: [
                     CardData(imagePath: 'assets/slider1.png'),
                     CardData(imagePath: 'assets/slider2.png'),
@@ -175,6 +194,7 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
             ),
           ],
         ),
+
       ),
     );
   }

@@ -156,7 +156,7 @@ class _CustomAppBarState extends State<CustomAppBar> with SingleTickerProviderSt
                                 borderRadius: BorderRadius.circular(30),
                                 borderSide: BorderSide.none,
                               ),
-                              prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                              prefixIcon: const Icon(Icons.search_outlined, color: Colors.white54),
                             ),
                             style: const TextStyle(color: Colors.white),
                             onSubmitted: (value) {
