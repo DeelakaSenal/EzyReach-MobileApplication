@@ -8,10 +8,10 @@ class AboutUsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('About Us'),
-        backgroundColor: const Color.fromARGB(255, 161, 145, 209), // Match with your app theme
+        backgroundColor: const Color.fromARGB(255, 243, 229, 245), // Match with your app theme
         // Add a custom back button in the AppBar
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pop(context); // Pop the current screen from the navigation stack
           },
