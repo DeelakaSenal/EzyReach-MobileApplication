@@ -7,11 +7,11 @@ final Animation<double> fadeAnimation;
 final List<DrawerMenuItem> menuItems;
 
 const CustomDrawer({
-Key? key,
+super.key,
 required this.slideAnimation,
 required this.fadeAnimation,
 required this.menuItems,
-}) : super(key: key);
+});
 
 @override
 Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ context,
 item.icon,
 item.title,
 item.onTap,
-)).toList(),
+)),
 ],
 ),
 ),

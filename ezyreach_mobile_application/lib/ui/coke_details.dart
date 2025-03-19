@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 
 class CokeDetails extends StatelessWidget {
+  const CokeDetails({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Coca-cola'),
-        backgroundColor: Color(0xFFC484F1), // Use the same theme color
+        title: const Text('Coca-cola'),
+        backgroundColor: const Color(0xFFC484F1), // Use the same theme color
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
           child: Container(
             width: double.infinity,
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(15),
@@ -22,7 +24,7 @@ class CokeDetails extends StatelessWidget {
                   color: Colors.grey.withOpacity(0.2),
                   spreadRadius: 2,
                   blurRadius: 4,
-                  offset: Offset(0, 3), // Shadow position
+                  offset: const Offset(0, 3), // Shadow position
                 ),
               ],
             ),
@@ -40,7 +42,7 @@ class CokeDetails extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Title
                 Text(
@@ -50,10 +52,10 @@ class CokeDetails extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Description
-                Text(
+                const Text(
                   'Coca-Cola (Coke) is one of the world\'s most popular carbonated soft drinks, first introduced in 1886. '
                       'It is known for its refreshing taste, sweet flavor, and fizzy texture. Typically, Coke is served chilled '
                       'and is enjoyed as a refreshing beverage in various settings, from casual gatherings to parties. '
@@ -62,7 +64,7 @@ class CokeDetails extends StatelessWidget {
                   style: TextStyle(fontSize: 16),
                   textAlign: TextAlign.center, // Center text horizontally
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Contact Supplier Button
                 ElevatedButton(
@@ -70,12 +72,12 @@ class CokeDetails extends StatelessWidget {
                     print('Contact Supplier button pressed');
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF231942), // Dark purple button
+                    backgroundColor: const Color(0xFF231942), // Dark purple button
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: Text(
+                  child: const Text(
                     'Place Order',
                     style: TextStyle(color: Colors.white),
                   ),

@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "51581949561",
-    "project_id": "ezyreach-5fe0a",
-    "storage_bucket": "ezyreach-5fe0a.firebasestorage.app"
+    "project_number": "1030152776545",
+    "project_id": "ezy-reach",
+    "storage_bucket": "ezy-reach.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:51581949561:android:ea8e891318187af76ca6a8",
+        "mobilesdk_app_id": "1:1030152776545:android:2ddcaa1869482a41957320",
         "android_client_info": {
           "package_name": "com.example.ezyreach_mobile_application"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "51581949561-0k63q0u3cnaar0h3un8fa25ct02v4m13.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAd8GApOPvXR2SF8MhtL5Mg70jSXEPzDAc"
+          "current_key": "AIzaSyAMjMFgwrqDZhR6qhlQV2oKU5c-1N9uiEQ"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "51581949561-0k63q0u3cnaar0h3un8fa25ct02v4m13.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

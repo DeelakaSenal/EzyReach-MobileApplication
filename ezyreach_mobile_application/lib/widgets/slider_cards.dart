@@ -9,9 +9,9 @@ class SliderCards extends StatefulWidget {
   final List<CardData> cards;
 
   const SliderCards({
-    Key? key,
+    super.key,
     required this.cards,
-  }) : super(key: key);
+  });
 
   @override
   State<SliderCards> createState() => _SliderCardsState();

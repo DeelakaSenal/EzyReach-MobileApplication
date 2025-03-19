@@ -1,28 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'coke_details.dart';
 import 'about_us.dart';
 import 'AccountPage.dart';
 import '../widgets/slider_cards.dart';
 import '../widgets/app_bar.dart';
 import '../widgets/ham_menu.dart';
-
-class Company {
-  final String companyName;
-  final String logoUrl;
-
-  Company({
-    required this.companyName,
-    required this.logoUrl,
-  });
-
-  factory Company.fromMap(Map<String, dynamic> map) {
-    return Company(
-      companyName: map['companyName'] ?? '',
-      logoUrl: map['logoUrl'] ?? '',
-    );
-  }
-}
 
 class ShopOwnerDashboard extends StatefulWidget {
   const ShopOwnerDashboard({super.key});
@@ -50,13 +32,17 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    _slideAnimation = Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
-        .animate(CurvedAnimation(
+    _slideAnimation = Tween<Offset>(
+      begin: const Offset(-1, 0),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(
       parent: _menuAnimationController,
       curve: Curves.easeInOut,
     ));
-    _menuRotationAnimation = Tween<double>(begin: 0, end: 0.5)
-        .animate(CurvedAnimation(
+    _menuRotationAnimation = Tween<double>(
+      begin: 0,
+      end: 0.5,
+    ).animate(CurvedAnimation(
       parent: _menuAnimationController,
       curve: Curves.easeInOut,
     ));
@@ -183,145 +169,30 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
                 const Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text(
-                    "Companies",
+                    "Featured Products",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 28,
+                      fontSize: 24,
                       color: Colors.black,
                     ),
                   ),
                 ),
                 Expanded(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('company').snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return const Center(
-                          child: Text('Something went wrong'),
-                        );
-                      }
-
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      }
-
-                      if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                        return const Center(
-                          child: Text('No companies available'),
-                        );
-                      }
-
-                      return GridView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16,
-                          mainAxisSpacing: 16,
-                          childAspectRatio: 0.85,
-                        ),
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          final doc = snapshot.data!.docs[index];
-                          final company = Company.fromMap(doc.data() as Map<String, dynamic>);
-
-                          return Card(
-                            elevation: 3,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed from start to spaceBetween
-                              mainAxisSize: MainAxisSize.max, // Changed from min to max
-                              children: [
-                                // Company Logo Section
-                                Container(
-                                  height: 90, // Slightly reduced from 100
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(15),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Image.network(
-                                        company.logoUrl,
-                                        width: 60, // Slightly reduced from 70
-                                        height: 60, // Slightly reduced from 70
-                                        fit: BoxFit.contain,
-                                        errorBuilder: (context, error, stackTrace) {
-                                          return Container(
-                                            width: 60,
-                                            height: 60,
-                                            color: Colors.grey[300],
-                                            child: const Icon(Icons.error_outline),
-                                          );
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                // Company Name Section
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, // Reduced from 12
-                                    vertical: 4, // Reduced from 8
-                                  ),
-                                  child: Text(
-                                    company.companyName,
-                                    style: const TextStyle(
-                                      fontSize: 14, // Reduced from 16
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                                // Order Button - Moved padding inside the button's style
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 8,
-                                      right: 8,
-                                      bottom: 8,
-                                    ),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        print('Order from ${company.companyName}');
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xFFB077E3),
-                                        foregroundColor: Colors.white,
-                                        elevation: 0,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(25),
-                                        ),
-                                        padding: const EdgeInsets.symmetric(vertical: 6), // Reduced from 8
-                                        minimumSize: const Size(double.infinity, 32), // Reduced height from 40
-                                        maximumSize: const Size(double.infinity, 32), // Reduced height from 40
-                                      ),
-                                      child: const Text(
-                                        'Order',
-                                        style: TextStyle(
-                                          fontSize: 12, // Reduced from 14
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-
-                        },
-                      );
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                      children: [
+                        buildProductCard('assets/coke.jpeg', context),
+                        buildProductCard('assets/elephanthouse.jpeg', context),
+                        buildProductCard('assets/unilever.jpeg', context),
+                        buildProductCard('assets/kandos.jpg', context),
+                        buildProductCard('assets/maliban.jpg', context),
+                        buildProductCard('assets/munchee.png', context),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -333,6 +204,68 @@ class _ShopOwnerDashboardState extends State<ShopOwnerDashboard> with TickerProv
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget buildProductCard(String image, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.asset(
+              image,
+              height: 100,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  height: 100,
+                  color: Colors.grey[200],
+                  child: const Icon(
+                    Icons.broken_image,
+                    size: 60,
+                    color: Colors.grey,
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 8),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CokeDetails(),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF231942),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            child: const Text(
+              "View Details",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }

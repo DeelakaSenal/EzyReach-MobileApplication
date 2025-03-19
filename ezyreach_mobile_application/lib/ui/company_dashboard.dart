@@ -5,7 +5,6 @@ import '../widgets/ham_menu.dart'; // Replace with actual path
 import 'about_us.dart';
 import 'AccountPage.dart';
 import 'add_product.dart';
-import 'login_page.dart';
 import 'product_list_page.dart';
 class CompanyDashboard extends StatefulWidget {
   const CompanyDashboard({super.key});
@@ -112,10 +111,7 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
         title: 'Logout',
         onTap: () {
           _toggleMenu();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => LoginPage()),
-          );
+          Navigator.pop(context);
         },
       ),
     ];
@@ -139,7 +135,7 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.0),
+                const SizedBox(height: 20.0),
                 SliderCards(
 
                   cards: [
@@ -163,24 +159,16 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
                   child: ListView(
                     children: [
                       _buildDashboardCard(
-                        title: "Products list",
-                        description: "View and manage your products",
-                        icon: Icons.list,
-                        onTap: () {_toggleMenu();
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ProductListPage()),
-                        );},
+                        title: "Company Overview",
+                        description: "View and manage your company details.",
+                        icon: Icons.business,
+                        onTap: () {},
                       ),
                       _buildDashboardCard(
-                        title: "Add product",
-                        description: "Add new items in here",
-                        icon: Icons.add_box_outlined,
-                        onTap: () {_toggleMenu();
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const AddProductPage()),
-                        );},
+                        title: "Team Management",
+                        description: "Manage your team and their roles.",
+                        icon: Icons.group,
+                        onTap: () {},
                       ),
                       _buildDashboardCard(
                         title: "Reports",
@@ -188,7 +176,12 @@ class _CompanyDashboardState extends State<CompanyDashboard> with TickerProvider
                         icon: Icons.bar_chart,
                         onTap: () {},
                       ),
-
+                      _buildDashboardCard(
+                        title: "Settings",
+                        description: "Adjust application settings.",
+                        icon: Icons.settings,
+                        onTap: () {},
+                      ),
                     ],
                   ),
                 ),

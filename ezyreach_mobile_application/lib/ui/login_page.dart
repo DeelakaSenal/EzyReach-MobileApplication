@@ -7,7 +7,7 @@ import '../ui/company_dashboard.dart'; // Import CompanyDashboard page
 import '../ui/signup_page.dart'; // Import SignupPage
 
 class LoginPage extends StatefulWidget {
-  LoginPage({super.key});
+  const LoginPage({super.key});
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -53,7 +53,7 @@ class _LoginPageState extends State<LoginPage> {
         debugPrint('Navigating to ShopOwnerDashboard...');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ShopOwnerDashboard()),
+          MaterialPageRoute(builder: (context) => const ShopOwnerDashboard()),
         );
         return;
       }
@@ -68,7 +68,7 @@ class _LoginPageState extends State<LoginPage> {
         debugPrint('Navigating to SalesRepDashboard...');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SalesRepDashboard()),
+          MaterialPageRoute(builder: (context) => const SalesRepDashboard()),
         );
         return;
       }
@@ -83,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
         debugPrint('Navigating to CompanyDashboard...');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => CompanyDashboard()), // Navigate to CompanyDashboard
+          MaterialPageRoute(builder: (context) => const CompanyDashboard()), // Navigate to CompanyDashboard
         );
         return;
       }
@@ -223,7 +223,7 @@ class _LoginPageState extends State<LoginPage> {
                           onPressed: () {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => SignupPage()),
+                              MaterialPageRoute(builder: (context) => const SignupPage()),
                             );
                           },
                           child: Text.rich(

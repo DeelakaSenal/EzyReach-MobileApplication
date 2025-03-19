@@ -8,10 +8,10 @@ class AboutUsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('About Us'),
-        backgroundColor: const Color.fromARGB(255, 243, 229, 245), // Match with your app theme
+        backgroundColor: const Color.fromARGB(255, 161, 145, 209), // Match with your app theme
         // Add a custom back button in the AppBar
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context); // Pop the current screen from the navigation stack
           },
@@ -91,16 +91,16 @@ class AboutUsPage extends StatelessWidget {
 
             // Footer or Contact info with icon
             const Divider(),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.email,
                     color: Color(0xFF8906e6), // Use your color palette
                   ),
-                  const SizedBox(width: 8),
-                  const Text(
+                  SizedBox(width: 8),
+                  Text(
                     'Contact Us: support@ezyreach.com',
                     style: TextStyle(
                       fontSize: 16,

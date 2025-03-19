@@ -7,11 +7,11 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String logoPath;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.onMenuPressed,
     required this.menuRotationAnimation,
     this.logoPath = 'assets/dashIMG.png',
-  }) : super(key: key);
+  });
 
   @override
   Size get preferredSize => const Size.fromHeight(70);

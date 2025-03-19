@@ -52,7 +52,7 @@ class _LandingPageState extends State<LandingPage> {
               borderRadius: BorderRadius.circular(10),
               value: _progress,
               backgroundColor: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.deepPurple), // Progress color
+              valueColor: const AlwaysStoppedAnimation<Color>(Colors.deepPurple), // Progress color
               minHeight: 5, // Height of the progress bar
             ),
           ),

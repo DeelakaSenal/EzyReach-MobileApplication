@@ -1,6 +1,4 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Android: Add to AndroidManifest.xml -->
-    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="ezyreach_mobile_application"
         android:name="${applicationName}"
